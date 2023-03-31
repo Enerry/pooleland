@@ -1,0 +1,17 @@
+- class_name: 友情链接
+  class_desc: 
+  link_list:
+    - name: 黑洞
+      link: https://foreverblog.cn/go.html
+      avatar: /design/wormhole_2.gif
+      descr: 随机访问下一个十年之约的博客
+
+
+- #class_name: 
+  #class_desc: 
+  #link_list:
+  #  - name: 
+  #    link: 
+  #    avatar: 
+  #    descr: 
+

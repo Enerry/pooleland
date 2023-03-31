@@ -2,6 +2,8 @@
 title: 从这里启程
 date: 2023-3-30
 tags: [网站建设，随笔]
+updated: 2023-3-30
+discription: 上善若水，且歌且行
 ---
 
 终于终于，把搭建一个个人网站的想法turn into reality啦。
