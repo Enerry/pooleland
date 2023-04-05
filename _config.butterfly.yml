@@ -31,7 +31,7 @@ code_word_wrap: false
 # copy settings
 # copyright: Add the copyright information after copied content (複製的內容後面加上版權信息)
 copy:
-  enable: true
+  enable: 0
   copyright:
     enable: 1
     limit_count: 50
@@ -146,8 +146,8 @@ error_img:
 
 # A simple 404 page
 error_404:
-  enable: false
-  subtitle: 'Page Not Found'
+  enable: 1
+  subtitle: '页面没有找到，可能我还没搭好'
   background: https://i.loli.net/2020/05/19/aKOcLiyPl2JQdFD.png
 
 post_meta:
@@ -205,8 +205,8 @@ post_copyright:
   enable: true
   decode: false
   author_href:
-  license: CC BY-NC-SA 4.0
-  license_url: https://creativecommons.org/licenses/by-nc-sa/4.0/
+  license: CC BY-NC-ND 4.0
+  license_url: https://creativecommons.org/licenses/by-nc-nd/4.0/
 
 # Sponsor/reward
 reward:
@@ -215,9 +215,9 @@ reward:
      - img: /images/reward_wechat.jpg
        link: 
        text: wechat
-    # - img: /img/alipay.jpg
-    #   link:
-    #   text: alipay
+     - img: /images/reward_alipay.jpg
+       link:
+       text: alipay
 
 # Post edit
 # Easily browse and edit blog source code online.
@@ -573,7 +573,7 @@ canvas_nest:
 activate_power_mode:
   enable: 1
   colorful: 1 # open particle animation (冒光特效)
-  shake: true #  open shake (抖動特效)
+  shake: 0 #  open shake (抖動特效)
   mobile: false
 
 # Mouse click effects: fireworks (鼠標點擊效果: 煙火特效)
