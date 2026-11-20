@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""一键发布：整理 inbox 笔记 -> 暂存白名单文件 -> 提交 -> 推送到 GitHub。"""
+
+import argparse
+import datetime as dt
+import subprocess
+import sys
+from pathlib import Path
+
+WHITELIST = [
+    '_config.yml',
+    '_config.butterfly.yml',
+    'netlify.toml',
+    '发布.bat',
+    '一键发布.bat',
+    'tools',
+    'inbox',
+    'source',
+]
+
+
+def run(cmd, cwd, check=True):
+    print('执行：' + ' '.join(cmd))
+    result = subprocess.run(cmd, cwd=cwd, check=False)
+    if check and result.returncode != 0:
+        raise SystemExit('命令失败，退出码 ' + str(result.returncode) + '：' + ' '.join(cmd))
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description='一键整理笔记并提交、推送博客')
+    parser.add_argument('--root', default=r'D:\pooleland', help='博客根目录')
+    parser.add_argument('--message', help='自定义提交说明')
+    parser.add_argument('--no-push', action='store_true', help='只提交，不推送')
+    parser.add_argument('--dry-run', action='store_true', help='只打印将执行的步骤，不改动任何东西')
+    args = parser.parse_args()
+
+    root = Path(args.root)
+    inbox = root / 'inbox'
+    notes = sorted(inbox.glob('*.md')) if inbox.is_dir() else []
+    print('=== 一键发布 ===')
+    print('博客目录：' + str(root))
+    print('inbox 待发布笔记：' + (', '.join(n.name for n in notes) if notes else '无'))
+
+    if args.dry_run:
+        print('（预览模式，不会写入或提交）')
+        if notes:
+            print('将运行：python tools/publish_post.py commit')
+        print('将暂存：' + ', '.join(WHITELIST))
+        print('将提交并推送到 origin master')
+        return 0
+
+    if notes:
+        run([sys.executable, 'tools/publish_post.py', 'commit'], root)
+
+    run(['git', 'add', '-A', '--'] + WHITELIST, root)
+    staged = subprocess.run(['git', 'diff', '--cached', '--quiet'], cwd=root, check=False)
+    if staged.returncode == 0:
+        print('没有需要提交的改动，结束。')
+        return 0
+
+    message = args.message or ('自动发布：' + dt.datetime.now().strftime('%Y-%m-%d %H:%M'))
+    run(['git', 'commit', '-m', message], root)
+    if not args.no_push:
+        run(['git', 'push', 'origin', 'master'], root)
+    print('完成。Netlify 会自动构建并发布，稍后打开 https://pooleland.com 验收。')
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main())

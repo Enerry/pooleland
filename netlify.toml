@@ -1,0 +1,6 @@
+[build]
+  command = "npm install -g hexo-cli@4.3.0 && git submodule update --init --recursive && hexo generate"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "22"

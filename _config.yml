@@ -14,7 +14,7 @@ email: cedardom@outlook.com
 
 # URL
 ## Set your site url here. For example, if you use GitHub Page, set url as 'https://username.github.io/project'
-url: http://pooleland.com
+url: https://pooleland.com
 permalink: :year/:month/:title/
 permalink_defaults:
 pretty_urls:
@@ -105,4 +105,4 @@ theme: butterfly
 deploy:
   type: 'git'
   repo: https://github.com/Enerry/pooleland
-  branch: main
+  branch: master

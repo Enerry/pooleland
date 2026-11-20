@@ -6,7 +6,6 @@ updated: 2023-3-31
 discription: 置顶
 sticky: 9
 cover: /images/article/23_1/top_arti_cover.jpg
-comments: 0
 index_enable: 1
 aside_enable: 1
 archives_enable: 1
