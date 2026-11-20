@@ -57,7 +57,14 @@ def main():
     run(['git', 'add', '-A', '--'] + WHITELIST, root)
     staged = subprocess.run(['git', 'diff', '--cached', '--quiet'], cwd=root, check=False)
     if staged.returncode == 0:
-        print('没有需要提交的改动，结束。')
+        status = subprocess.run(['git', 'status', '--porcelain', '-b'], cwd=root,
+                                capture_output=True, text=True, encoding='utf-8', errors='replace')
+        if status.stdout and '[ahead' in status.stdout:
+            print('没有新的暂存改动，但本地有未推送提交，直接推送。')
+            if not args.no_push:
+                run(['git', 'push', 'origin', 'master'], root)
+        else:
+            print('没有需要提交的改动，结束。')
         return 0
 
     message = args.message or ('自动发布：' + dt.datetime.now().strftime('%Y-%m-%d %H:%M'))
