@@ -2,6 +2,7 @@
 title: 坂本龙一教授，晚安
 date: 2023-4-5
 tags: [思忆]
+categories: [随笔]
 updated: 2023-5-18
 #discription: 
 #cover: 

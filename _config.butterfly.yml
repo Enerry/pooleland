@@ -7,6 +7,7 @@ menu:
   # 归档: /Archives/ || fas fa-archive
    标签: /Tags/ || fas fa-tags
    类别: /Categories/ || fas fa-folder-open
+   服务: /service/ || fas fa-concierge-bell
   # List||fas fa-list:
   #   Music: /music/ || fas fa-music
   #   Movie: /movies/ || fas fa-video
@@ -892,7 +893,7 @@ inject:
   head:
     # - <link rel="stylesheet" href="/xxx.css">
   bottom:
-    # - <script src="xxxx"></script>
+    - '<script>document.addEventListener("DOMContentLoaded",function(){var b=document.getElementById("card-info-btn");if(!b)return;b.setAttribute("href","javascript:void(0)");b.addEventListener("click",function(e){e.preventDefault();var t="按 Ctrl+D（Mac: ⌘D）收藏本站";if(window.btf&&btf.snackbarShow){btf.snackbarShow(t)}else{alert(t)}})})</script>'
 
 # CDN
 # Don't modify the following settings unless you know how they work

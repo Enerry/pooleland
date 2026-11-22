@@ -2,6 +2,7 @@
 title: 置顶
 date: 2023-3-30
 tags: [网站建设]
+categories: [站点]
 updated: 2023-3-31
 discription: 置顶
 sticky: 9

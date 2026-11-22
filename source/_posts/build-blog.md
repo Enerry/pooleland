@@ -2,6 +2,7 @@
 title: 从零开始搭建博客
 date: 2023-4-3
 tags: [网站建设]
+categories: [技术]
 updated: 2023-4-5
 # discription: 个人经验分享
 cover: /images/article/23_1/build_blog.jpg

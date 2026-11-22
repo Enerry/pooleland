@@ -1,9 +1,10 @@
 ---
 title: 从这里启程
 date: 2023-3-30
-tags: [网站建设,随笔]
+tags: [网站建设,历程]
+categories: [随笔]
 updated: 2023-3-30
-discription: 上善若水，且歌且行
+description: 上善若水，且歌且行
 cover: /images/article/23_1/first_blog.jpg
 ---
 
