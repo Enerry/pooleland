@@ -15,6 +15,13 @@ def read_text(path: Path) -> str:
     return path.read_text(encoding='utf-8-sig')
 
 
+def make_slug(stem: str) -> str:
+    """用笔记文件名作为 Hexo 文章的 slug（网址的一部分）。"""
+    slug = re.sub(r'[^\w\u4e00-\u9fff-]', '-', stem, flags=re.UNICODE)
+    slug = re.sub(r'-+', '-', slug).strip('-')
+    return slug or 'post'
+
+
 def split_front_matter(text: str):
     if not text.startswith('---'):
         return {}, text
@@ -93,7 +100,7 @@ def build_plan(note: Path, root: Path):
     if lines and lines[0].strip().startswith('# ') and lines[0].strip()[2:].strip() == title:
         body = '\n'.join(lines[1:]).strip() + '\n'
     tags = parse_tags(meta, body)
-    target = root / 'source' / '_posts' / ('post-' + date.strftime('%Y%m%d-%H%M%S') + '.md')
+    target = root / 'source' / '_posts' / (make_slug(note.stem) + '.md')
     month = date.strftime('%Y%m')
     image_dir = root / 'source' / 'images' / 'article' / month
     images = find_images(body, note.parent)
@@ -157,15 +164,20 @@ def main():
         return 0
 
     for plan in plans:
-        if plan['target'].exists():
-            print('目标已存在，已跳过：' + str(plan['target']))
-            continue
-        plan['target'].parent.mkdir(parents=True, exist_ok=True)
+        target = plan['target']
+        if target.exists():
+            if target.read_text(encoding='utf-8') == plan['content']:
+                print('目标已存在且内容一致，已跳过：' + str(target))
+                print('  若要修改这篇文章，请直接编辑 ' + str(target))
+                continue
+            target = target.with_name(target.stem + '-' + dt.datetime.now().strftime('%Y%m%d-%H%M%S') + target.suffix)
+            print('目标已存在且内容不同，改用新文件名：' + str(target))
+        target.parent.mkdir(parents=True, exist_ok=True)
         for _, src, dst in plan['images']:
             dst.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(src, dst if not dst.exists() else dst.with_name(dst.stem + '_copy' + dst.suffix))
-        plan['target'].write_text(plan['content'], encoding='utf-8')
-        print('已写入：' + str(plan['target']))
+        target.write_text(plan['content'], encoding='utf-8')
+        print('已写入：' + str(target))
     if args.build:
         print('开始构建...')
         subprocess.run('npm run build', cwd=root, shell=True, check=True)

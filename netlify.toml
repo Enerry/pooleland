@@ -4,3 +4,13 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+[[redirects]]
+  from = "/2026/11/post-20261120-000000/"
+  to = "/2026/11/2026-restart/"
+  status = 301
+
+[[redirects]]
+  from = "/2026/11/post-20261120-000000"
+  to = "/2026/11/2026-restart"
+  status = 301
