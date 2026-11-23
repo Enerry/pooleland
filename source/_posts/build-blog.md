@@ -4,7 +4,7 @@ date: 2023-4-3
 tags: [网站建设]
 categories: [技术]
 updated: 2023-4-5
-# discription: 个人经验分享
+description: 过去的个人经验分享(暂且停更 2026-11)
 cover: /images/article/23_1/build_blog.jpg
 index_enable: 1
 aside_enable: 1

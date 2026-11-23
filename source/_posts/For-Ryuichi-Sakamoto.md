@@ -4,7 +4,7 @@ date: 2023-4-5
 tags: [思忆]
 categories: [随笔]
 updated: 2023-5-18
-#discription: 
+description: 2023年3月28日，雨下了很久。Ars longa，vita brevis
 #cover: 
 ---
 
