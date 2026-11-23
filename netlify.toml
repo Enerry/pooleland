@@ -14,3 +14,13 @@
   from = "/2026/11/post-20261120-000000"
   to = "/2026/11/2026-restart"
   status = 301
+
+[[redirects]]
+  from = "/link/"
+  to = "/links/"
+  status = 301
+
+[[redirects]]
+  from = "/link"
+  to = "/links"
+  status = 301
