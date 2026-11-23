@@ -15,6 +15,7 @@ WHITELIST = [
     '发布.bat',
     '一键发布.bat',
     'tools',
+    'scripts',
     'inbox',
     'source',
 ]
