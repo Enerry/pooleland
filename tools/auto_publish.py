@@ -33,6 +33,24 @@ def run(cmd, cwd, check=True):
     return result
 
 
+def staged_paths(root):
+    """只把当前存在或仍被 git 跟踪的白名单路径交给 git add。"""
+    tracked_result = subprocess.run(
+        ['git', 'ls-files'], cwd=root, capture_output=True,
+        text=True, encoding='utf-8', errors='replace', check=False
+    )
+    tracked = set(tracked_result.stdout.splitlines())
+    paths = []
+    for path in WHITELIST:
+        exists = (root / path).exists()
+        tracked_path = path in tracked or any(name.startswith(path + '/') for name in tracked)
+        if exists or tracked_path:
+            paths.append(path)
+        else:
+            print('  跳过已不存在的路径：' + path)
+    return paths
+
+
 def main():
     parser = argparse.ArgumentParser(description='一键整理笔记并提交、推送博客')
     parser.add_argument('--root', default=r'D:\pooleland', help='博客根目录')
@@ -52,14 +70,14 @@ def main():
         print('（预览模式，不会写入或提交）')
         if notes:
             print('将运行：python tools/publish_post.py commit')
-        print('将暂存：' + ', '.join(WHITELIST))
+        print('将暂存：' + ', '.join(staged_paths(root)))
         print('将提交并推送到 origin master')
         return 0
 
     if notes:
         run([sys.executable, 'tools/publish_post.py', 'commit'], root)
 
-    run(['git', 'add', '-A', '--'] + WHITELIST, root)
+    run(['git', 'add', '-A', '--'] + staged_paths(root), root)
     staged = subprocess.run(['git', 'diff', '--cached', '--quiet'], cwd=root, check=False)
     if staged.returncode == 0:
         status = subprocess.run(['git', 'status', '--porcelain', '-b'], cwd=root,
