@@ -33,6 +33,24 @@ def run(cmd, cwd, check=True):
     return result
 
 
+def push_master(root):
+    """推送 master；遇到网络重置时自动用 HTTP/1.1 重试。"""
+    attempts = [
+        ['git', 'push', 'origin', 'master'],
+        ['git', '-c', 'http.version=HTTP/1.1', '-c', 'http.postBuffer=104857600',
+         'push', 'origin', 'master'],
+        ['git', '-c', 'http.version=HTTP/1.1', '-c', 'http.postBuffer=104857600',
+         'push', 'origin', 'master'],
+    ]
+    for index, cmd in enumerate(attempts):
+        result = run(cmd, root, check=False)
+        if result.returncode == 0:
+            return
+        if index < len(attempts) - 1:
+            print('推送失败，正在重试（' + str(index + 1) + '/3）……')
+    raise SystemExit('命令失败，推送 3 次仍未成功：git push origin master')
+
+
 def staged_paths(root):
     """只把当前存在或仍被 git 跟踪的白名单路径交给 git add。"""
     tracked_result = subprocess.run(
@@ -85,7 +103,7 @@ def main():
         if status.stdout and '[ahead' in status.stdout:
             print('没有新的暂存改动，但本地有未推送提交，直接推送。')
             if not args.no_push:
-                run(['git', 'push', 'origin', 'master'], root)
+                push_master(root)
         else:
             print('没有需要提交的改动，结束。')
         return 0
@@ -93,7 +111,7 @@ def main():
     message = args.message or ('自动发布：' + dt.datetime.now().strftime('%Y-%m-%d %H:%M'))
     run(['git', 'commit', '-m', message], root)
     if not args.no_push:
-        run(['git', 'push', 'origin', 'master'], root)
+        push_master(root)
     print('完成。Netlify 会自动构建并发布，稍后打开 https://pooleland.com 验收。')
     return 0
 
