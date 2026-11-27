@@ -360,6 +360,48 @@ figure.highlight {
   color: var(--m-accent-strong) !important;
 }
 
+/* 侧栏文章行：整块可点击 + 版权框式悬浮发光 */
+#aside-content .card-recent-post .aside-list-item,
+#aside-content .card-post-series .aside-list-item {
+  position: relative;
+  border-radius: 8px;
+  margin: 0 -8px;
+  padding: 6px 8px !important;
+  cursor: pointer;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+#aside-content .card-recent-post .aside-list-item:first-child,
+#aside-content .card-post-series .aside-list-item:first-child {
+  padding-top: 6px !important;
+}
+
+#aside-content .card-recent-post .aside-list-item:last-child,
+#aside-content .card-post-series .aside-list-item:last-child {
+  padding-bottom: 6px !important;
+}
+
+#aside-content .card-recent-post .aside-list-item:hover,
+#aside-content .card-post-series .aside-list-item:hover {
+  background: var(--m-hover) !important;
+  box-shadow: 0 0 8px 2px rgba(227, 205, 145, 0.34), 0 2px 6px rgba(0, 0, 0, 0.26) !important;
+  transform: translateX(2px);
+}
+
+[data-theme='light'] #aside-content .card-recent-post .aside-list-item:hover,
+[data-theme='light'] #aside-content .card-post-series .aside-list-item:hover {
+  box-shadow: 0 0 10px 2px rgba(43, 65, 91, 0.14), 0 2px 6px rgba(43, 65, 91, 0.08) !important;
+}
+
+#aside-content .card-recent-post .aside-list-item .content > a.title::after,
+#aside-content .card-post-series .aside-list-item .content > a.title::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 8px;
+}
+
 /* ---------- 标签云页 ---------- */
 .article-sort-item-title,
 .category-lists a,

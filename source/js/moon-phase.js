@@ -4,6 +4,9 @@
   var SYNODIC_MONTH = 29.530588853;
   var REFERENCE_NEW_MOON = Date.UTC(2000, 0, 6, 18, 14);
   var DAY = 24 * 60 * 60 * 1000;
+  var MOON_TEXTURE = '/images/moon-texture.webp';
+  var HORIZON = 540;
+  var REFLECTION_SHIFT = 940;
 
   function pad(n) {
     return n < 10 ? '0' + n : '' + n;
@@ -38,8 +41,6 @@
     var cy = 310;
     var k = phase.illuminated;
     var rx = Math.max(0.01, Math.abs(1 - 2 * k) * r);
-    var left = cx - r;
-    var right = cx + r;
     var top = cy - r;
     var bottom = cy + r;
     var outerSweep = phase.waxing ? 1 : 0;
@@ -53,68 +54,80 @@
     ].join(' ');
   }
 
-  function buildSvg(phase) {
-    var litPath = moonPath(phase);
-    var glowOpacity = (0.08 + phase.illuminated * 0.26).toFixed(3);
-    var moonOpacity = (0.62 + phase.illuminated * 0.36).toFixed(3);
+  function litMoonMarkup(phase, textureDataUrl, opacity) {
+    if (textureDataUrl) {
+      return '<image x="1138" y="232" width="156" height="156" href="' + textureDataUrl +
+        '" preserveAspectRatio="xMidYMid slice" clip-path="url(#lit-moon)" opacity="' + opacity + '"/>';
+    }
+    return '<path d="' + moonPath(phase) + '" fill="#F5E8BC" opacity="' + opacity + '"/>';
+  }
+
+  function buildSvg(phase, textureDataUrl) {
+    var glowOpacity = (0.07 + phase.illuminated * 0.22).toFixed(3);
+    var moonOpacity = (0.72 + phase.illuminated * 0.26).toFixed(3);
+    var moon = litMoonMarkup(phase, textureDataUrl, moonOpacity);
 
     return [
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">',
+      '<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">',
       '<defs>',
       '<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">',
       '<stop offset="0" stop-color="#040B16"/>',
-      '<stop offset="0.48" stop-color="#0A1D33"/>',
-      '<stop offset="1" stop-color="#173A55"/>',
+      '<stop offset="0.52" stop-color="#0A1D33"/>',
+      '<stop offset="1" stop-color="#123047"/>',
       '</linearGradient>',
       '<radialGradient id="glow" cx="76%" cy="38%" r="36%">',
       '<stop offset="0" stop-color="#FFF4CC" stop-opacity="' + glowOpacity + '"/>',
-      '<stop offset="0.42" stop-color="#C9DCEC" stop-opacity="0.12"/>',
+      '<stop offset="0.45" stop-color="#C9DCEC" stop-opacity="0.10"/>',
       '<stop offset="1" stop-color="#0A1D33" stop-opacity="0"/>',
       '</radialGradient>',
       '<linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">',
       '<stop offset="0" stop-color="#12324A"/>',
       '<stop offset="1" stop-color="#061322"/>',
       '</linearGradient>',
-      '<linearGradient id="reflection" x1="0" y1="0" x2="0" y2="1">',
-      '<stop offset="0" stop-color="#F3E6B8" stop-opacity="0.42"/>',
+      '<linearGradient id="reflection" gradientUnits="userSpaceOnUse" x1="0" y1="' + HORIZON + '" x2="0" y2="880">',
+      '<stop offset="0" stop-color="#FFF4CC" stop-opacity="0.78"/>',
+      '<stop offset="0.42" stop-color="#F3E6B8" stop-opacity="0.32"/>',
       '<stop offset="1" stop-color="#F3E6B8" stop-opacity="0"/>',
       '</linearGradient>',
+      '<radialGradient id="reflection-glow" gradientUnits="userSpaceOnUse" cx="1216" cy="620" r="180">',
+      '<stop offset="0" stop-color="#FFF4CC" stop-opacity="0.34"/>',
+      '<stop offset="0.46" stop-color="#D8BD7A" stop-opacity="0.14"/>',
+      '<stop offset="1" stop-color="#0A1D33" stop-opacity="0"/>',
+      '</radialGradient>',
+      '<clipPath id="lit-moon"><path d="' + moonPath(phase) + '"/></clipPath>',
       '</defs>',
       '<rect width="1600" height="900" fill="url(#sky)"/>',
       '<rect width="1600" height="900" fill="url(#glow)"/>',
-      '<circle cx="1216" cy="310" r="78" fill="#0A1828" opacity="0.72"/>',
-      '<path d="' + litPath + '" fill="#F5E8BC" opacity="' + moonOpacity + '"/>',
-      '<circle cx="1216" cy="310" r="91" fill="none" stroke="#F5E8BC" stroke-width="1" opacity="0.28"/>',
-      '<path d="M0 452 L0 414 L118 392 L214 410 L318 360 L421 414 L540 386 L650 430 L760 402 L900 438 L1040 410 L1180 442 L1310 418 L1450 446 L1600 420 L1600 452 Z" fill="#06182A" opacity="0.72"/>',
-      '<path d="M0 456 C220 426 420 470 640 448 C860 426 1080 468 1300 446 C1450 432 1530 448 1600 440 L1600 900 L0 900 Z" fill="url(#sea)"/>',
-      '<g fill="none" stroke="#A9C6DD" stroke-width="2" opacity="0.16">',
-      '<path d="M-20 510 C190 478 400 542 620 506 C840 470 1060 538 1280 500 C1450 470 1540 500 1620 486"/>',
-      '<path d="M-20 568 C210 536 420 600 650 562 C870 526 1090 596 1310 556 C1460 528 1550 556 1620 544"/>',
-      '<path d="M-20 634 C240 598 450 668 680 628 C910 588 1130 662 1350 620 C1500 592 1570 618 1620 608"/>',
-      '<path d="M-20 708 C260 670 480 744 720 700 C950 658 1170 736 1400 692 C1520 670 1580 690 1620 682"/>',
-      '<path d="M-20 790 C280 752 520 826 760 780 C990 738 1220 816 1450 772 C1540 756 1590 772 1620 766"/>',
+      moon,
+      '<rect x="0" y="' + HORIZON + '" width="1600" height="' + (900 - HORIZON) + '" fill="url(#sea)"/>',
+      '<ellipse cx="1216" cy="620" rx="190" ry="220" fill="url(#reflection-glow)" opacity="0.78"/>',
+      '<g fill="none" stroke="url(#reflection)" stroke-width="3" stroke-linecap="round">',
+      '<path d="M1192 550 H1240" opacity="0.82"/>',
+      '<path d="M1182 566 H1250" opacity="0.76"/>',
+      '<path d="M1200 582 H1232" opacity="0.70"/>',
+      '<path d="M1170 600 H1262" opacity="0.64"/>',
+      '<path d="M1188 620 H1244" opacity="0.58"/>',
+      '<path d="M1158 642 H1274" opacity="0.52"/>',
+      '<path d="M1178 666 H1254" opacity="0.45"/>',
+      '<path d="M1148 694 H1284" opacity="0.38"/>',
+      '<path d="M1170 726 H1262" opacity="0.30"/>',
+      '<path d="M1138 762 H1294" opacity="0.22"/>',
+      '<path d="M1164 804 H1268" opacity="0.14"/>',
       '</g>',
-      '<g fill="none" stroke="url(#reflection)" stroke-width="3" stroke-linecap="round" opacity="0.58">',
-      '<path d="M1198 462 L1232 462"/>',
-      '<path d="M1184 500 L1248 500"/>',
-      '<path d="M1204 540 L1228 540"/>',
-      '<path d="M1176 582 L1256 582"/>',
-      '<path d="M1200 628 L1232 628"/>',
-      '<path d="M1168 678 L1264 678"/>',
-      '<path d="M1196 734 L1236 734"/>',
+      '<g fill="none" stroke="#A9C6DD" stroke-width="2" opacity="0.08">',
+      '<path d="M0 620 C220 594 420 646 640 616 C860 586 1080 644 1300 610 C1450 586 1540 610 1620 600"/>',
+      '<path d="M0 700 C240 672 460 724 700 692 C940 660 1160 718 1400 684 C1520 668 1580 686 1620 678"/>',
+      '<path d="M0 790 C280 762 520 814 760 780 C990 748 1220 806 1450 772 C1540 758 1590 774 1620 768"/>',
       '</g>',
-      '<g fill="none" stroke="#D7C28D" stroke-width="1.5" opacity="0.26">',
-      '<path d="M130 750 Q220 720 310 750 Q400 780 490 750"/>',
-      '<path d="M980 812 Q1070 782 1160 812 Q1250 842 1340 812"/>',
-      '</g>',
+      '<path d="M0 ' + HORIZON + ' H1600" stroke="#D7C28D" stroke-width="1.5" opacity="0.20"/>',
       '</svg>'
     ].join('');
   }
 
-  function apply() {
+  function apply(textureDataUrl) {
     var now = new Date();
     var phase = getPhase(now);
-    var svg = buildSvg(phase);
+    var svg = buildSvg(phase, textureDataUrl || '');
     var url = 'url("data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '")';
 
     document.documentElement.style.setProperty('--moon-image', url);
@@ -123,5 +136,33 @@
     document.documentElement.setAttribute('data-moon-date', now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate()));
   }
 
-  apply();
+  function blobToDataUrl(blob, callback) {
+    var reader = new FileReader();
+    reader.onload = function () { callback(reader.result); };
+    reader.onerror = function () { callback(''); };
+    reader.readAsDataURL(blob);
+  }
+
+  apply('');
+
+  if (window.fetch) {
+    fetch(MOON_TEXTURE)
+      .then(function (response) {
+        if (!response.ok) throw new Error('texture not found');
+        return response.blob();
+      })
+      .then(function (blob) {
+        blobToDataUrl(blob, function (dataUrl) {
+          if (!dataUrl) return;
+          var comma = dataUrl.indexOf(',');
+          if (comma > -1) {
+            dataUrl = 'data:image/webp;base64,' + dataUrl.slice(comma + 1);
+          }
+          apply(dataUrl);
+        });
+      })
+      .catch(function () {
+        // 纹理加载失败时保留纯色月相兜底。
+      });
+  }
 })();
