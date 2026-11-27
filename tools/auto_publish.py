@@ -4,6 +4,7 @@
 
 import argparse
 import datetime as dt
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -33,14 +34,49 @@ def run(cmd, cwd, check=True):
     return result
 
 
+def detect_proxy():
+    """读取环境变量或 Windows 系统代理，避免 Git 直连 GitHub。"""
+    for name in ('HTTPS_PROXY', 'https_proxy', 'HTTP_PROXY', 'http_proxy'):
+        value = os.environ.get(name, '').strip()
+        if value:
+            print('使用环境变量代理：' + value)
+            return value
+
+    if sys.platform == 'win32':
+        try:
+            import winreg
+            key = winreg.OpenKey(
+                winreg.HKEY_CURRENT_USER,
+                r'Software\Microsoft\Windows\CurrentVersion\Internet Settings'
+            )
+            enabled, _ = winreg.QueryValueEx(key, 'ProxyEnable')
+            server, _ = winreg.QueryValueEx(key, 'ProxyServer')
+            winreg.CloseKey(key)
+            if enabled and server:
+                proxy = server.strip()
+                if '://' not in proxy:
+                    proxy = 'http://' + proxy
+                print('使用 Windows 系统代理：' + proxy)
+                return proxy
+        except Exception:
+            pass
+    return ''
+
+
 def push_master(root):
-    """推送 master；遇到网络重置时自动用 HTTP/1.1 重试。"""
+    """推送 master；自动识别代理，并在网络重置时改用 HTTP/1.1 重试。"""
+    proxy = detect_proxy()
+    proxy_args = []
+    if proxy:
+        proxy_args = ['-c', 'http.proxy=' + proxy, '-c', 'https.proxy=' + proxy]
+
+    base = ['git'] + proxy_args
     attempts = [
-        ['git', 'push', 'origin', 'master'],
-        ['git', '-c', 'http.version=HTTP/1.1', '-c', 'http.postBuffer=104857600',
-         'push', 'origin', 'master'],
-        ['git', '-c', 'http.version=HTTP/1.1', '-c', 'http.postBuffer=104857600',
-         'push', 'origin', 'master'],
+        base + ['push', 'origin', 'master'],
+        base + ['-c', 'http.version=HTTP/1.1', '-c', 'http.postBuffer=104857600',
+                'push', 'origin', 'master'],
+        base + ['-c', 'http.version=HTTP/1.1', '-c', 'http.postBuffer=104857600',
+                'push', 'origin', 'master'],
     ]
     for index, cmd in enumerate(attempts):
         result = run(cmd, root, check=False)
