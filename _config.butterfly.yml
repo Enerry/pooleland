@@ -1028,7 +1028,7 @@ lazyload:
   native: false
   # Specify the field to use lazyload (site or post)
   field: site
-  placeholder:
+  placeholder: /img/loading.gif
   blur: false
 
 # PWA
