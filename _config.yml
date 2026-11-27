@@ -17,6 +17,11 @@ email: cedardom@outlook.com
 url: https://pooleland.com
 permalink: :year/:month/:title/
 permalink_defaults:
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000
 pretty_urls:
   trailing_index: true # Set to false to remove trailing 'index.html' from permalinks
   trailing_html: true # Set to false to remove trailing '.html' from permalinks

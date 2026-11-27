@@ -3,6 +3,7 @@ title: 从变化到截面
 date: 2026-11-08 22:35:00
 tags: [弥思]
 categories: [漫思]
+series: 弥思两则
 updated: 2026-11-22 22:18:20
 description: 读《孙子兵法》：「战势不过奇正，奇正之变，不可胜穷也。」
 ---

@@ -5,7 +5,7 @@
       <stop offset="0.48" stop-color="#0A1D33"/>
       <stop offset="1" stop-color="#173A55"/>
     </linearGradient>
-    <radialGradient id="glow" cx="76%" cy="20%" r="36%">
+    <radialGradient id="glow" cx="76%" cy="38%" r="36%">
       <stop offset="0" stop-color="#FFF4CC" stop-opacity="0.34"/>
       <stop offset="0.42" stop-color="#C9DCEC" stop-opacity="0.12"/>
       <stop offset="1" stop-color="#0A1D33" stop-opacity="0"/>
@@ -23,8 +23,8 @@
   <rect width="1600" height="900" fill="url(#sky)"/>
   <rect width="1600" height="900" fill="url(#glow)"/>
 
-  <circle cx="1216" cy="178" r="78" fill="#F5E8BC" opacity="0.96"/>
-  <circle cx="1216" cy="178" r="91" fill="none" stroke="#F5E8BC" stroke-width="1" opacity="0.28"/>
+  <circle cx="1216" cy="310" r="78" fill="#F5E8BC" opacity="0.96"/>
+  <circle cx="1216" cy="310" r="91" fill="none" stroke="#F5E8BC" stroke-width="1" opacity="0.28"/>
 
   <path d="M0 452 L0 414 L118 392 L214 410 L318 360 L421 414 L540 386 L650 430 L760 402 L900 438 L1040 410 L1180 442 L1310 418 L1450 446 L1600 420 L1600 452 Z" fill="#06182A" opacity="0.72"/>
   <path d="M0 456 C220 426 420 470 640 448 C860 426 1080 468 1300 446 C1450 432 1530 448 1600 440 L1600 900 L0 900 Z" fill="url(#sea)"/>
